@@ -10,7 +10,7 @@ public class SwiftPhoneNumberPlugin: NSObject, FlutterPlugin {
 
     public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
         switch(call.method) {
-        case "parse": parse(call, result: result)
+        case "formatE164": formatE164(call, result: result)
         default:
             result(FlutterMethodNotImplemented)
         }
@@ -18,13 +18,14 @@ public class SwiftPhoneNumberPlugin: NSObject, FlutterPlugin {
 
     private let kit = PhoneNumberKit()
 
-    private func parse(_ call: FlutterMethodCall, result: FlutterResult) {
+
+    private func formatE164(_ call: FlutterMethodCall, result: FlutterResult) {
         guard
             let arguments = call.arguments as? [String : Any],
-            let string = arguments["string"] as? String
+            let phone = arguments["phone"] as? String
             else {
                 result(FlutterError(code: "InvalidArgument",
-                                    message: "The 'string' argument is missing.",
+                                    message: "The 'phone' argument is missing.",
                                     details: nil))
                 return
         }
@@ -40,45 +41,20 @@ public class SwiftPhoneNumberPlugin: NSObject, FlutterPlugin {
         // If it fails, we return a FlutterError to notify that the number is invalid.
         do {
             var phoneNumber: PhoneNumber
-            if let region = arguments["region"] as? String {
-                phoneNumber = try kit.parse(string, withRegion: region)
+            print(Locale.current.regionCode);
+            if let region = Locale.current.regionCode as? String {
+                phoneNumber = try kit.parse(phone, withRegion: region)
             }
             else {
-                phoneNumber = try kit.parse(string)
+                phoneNumber = try kit.parse(phone)
             }
 
-            let res:[String: String] = [
-                "type": phoneNumber.type.toString(),
-                "e164": kit.format(phoneNumber, toType: .e164),
-                "international": kit.format(phoneNumber, toType: .international, withPrefix: true),
-                "national": kit.format(phoneNumber, toType: .national)
-            ]
-
-            result(res)
+            result(kit.format(phoneNumber, toType: .e164))
         } catch {
             result(FlutterError(code: "InvalidNumber",
-                                message:"Failed to parse phone number string '\(string)'.",
+                                message:"Failed to parse phone number string '\(phone)'.",
                                 details: nil))
         }
     }
-}
 
-extension PhoneNumberType {
-    func toString() -> String {
-        switch self {
-        case .fixedLine: return "fixedLine"
-        case .mobile: return "mobile"
-        case .fixedOrMobile: return "fixedOrMobile"
-        case .notParsed: return "notParsed"
-        case .pager: return "pager"
-        case .personalNumber: return "personalNumber"
-        case .premiumRate: return "premiumRate"
-        case .sharedCost: return "sharedCost"
-        case .tollFree: return "tollFree"
-        case .uan: return "uan"
-        case .unknown: return "unknown"
-        case .voicemail: return "voicemail"
-        case .voip: return "voip"
-        }
-    }
 }

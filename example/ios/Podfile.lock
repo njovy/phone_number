@@ -25,10 +25,10 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/phone_number/ios"
 
 SPEC CHECKSUMS:
-  Flutter: 58dd7d1b27887414a370fcccb9e645c08ffd7a6a
-  phone_number: 1435ddff3e6e3aa29bb154483fc823b8ace02178
+  Flutter: 9d0fac939486c9aba2809b7982dfdbb47a7b0296
+  phone_number: d2472bf1f97eb562edcba5d96ba7d57cc79d509b
   PhoneNumberKit: 167ee1f0bbb6efce7c62559e620eae745595532f
 
 PODFILE CHECKSUM: ebd43b443038e611b86ede96e613bd6033c49497
 
-COCOAPODS: 1.6.1
+COCOAPODS: 1.5.3
